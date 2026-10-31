@@ -23,3 +23,6 @@ desktop.ini
 # 临时文件
 *.tmp
 tmp/
+
+# 打包产物（Release 附件，不入库）
+*.tgz
