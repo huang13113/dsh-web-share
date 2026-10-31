@@ -1,0 +1,11 @@
+# 统一换行符，避免 Windows 上提交后 diff 全是 CRLF 噪声
+* text=auto eol=lf
+
+# PowerShell 脚本在 Windows 上执行，保留 CRLF 更稳妥
+*.ps1 text eol=crlf
+
+# 二进制
+*.tgz binary
+*.png binary
+*.jpg binary
+*.svg text

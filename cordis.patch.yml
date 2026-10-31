@@ -1,0 +1,13 @@
+# dsh-web-brief 的 bundle patch
+#
+# 把「网页版」标签页挂进 profile 名册。
+# 这是一个双面包：
+#   - 宿主半边（exports "."）跑在 DSH 的 Node 进程里：注册只读工具
+#     read_deepseek_web 与同源路由 /api/dsweb/*。
+#   - 浏览器半边（exports "./client"）由 package.json 的 dsh.client 声明，
+#     经 /plugins/dsh-web-brief/client.js 加载，在对话栏注册「网页版」标签页。
+#
+# 只插入本插件自己的一行，不覆盖、不删除任何既有行。
+- insert:
+    - id: ui-web-brief
+      name: 'dsh-web-brief'

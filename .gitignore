@@ -1,0 +1,25 @@
+# 依赖与构建产物
+node_modules/
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+
+# 导出的对话转写（含个人隐私，绝不入库）
+_shared/
+dsweb-shared/
+*.outline.md
+
+# 诊断日志
+dsweb-host.log
+*.log
+
+# 编辑器 / 系统
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# 临时文件
+*.tmp
+tmp/

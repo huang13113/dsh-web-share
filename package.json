@@ -1,0 +1,71 @@
+{
+  "name": "dsh-web-brief",
+  "version": "0.3.0",
+  "description": "DSH 插件：侧栏「网页版导出」+ 对话栏「网页版」标签页，把 chat.deepseek.com 的对话压成交接包，一键开新对话并预填。",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib/*.js",
+    "dsweb-share/*.mjs",
+    "dsweb-share/readonly.guard.json",
+    "dsweb-share/tools/*.mjs",
+    "cordis.patch.yml",
+    "docs/read-diag.mjs",
+    "README.md",
+    "README.en.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "dsh",
+    "deepseek-harness",
+    "dsh-plugin",
+    "deepseek",
+    "chat.deepseek.com",
+    "read-only",
+    "conversation-export",
+    "context-handoff"
+  ],
+  "dsh": {
+    "engines": {
+      "dsh": ">=0.1.7-rc.2"
+    },
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "inject": [],
+      "platform": "web"
+    }
+  },
+  "peerDependencies": {
+    "@deepseek-ai/dsh": ">=0.1.7-rc.2"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node tests/smoke.mjs",
+    "selftest": "node dsweb-share/dsweb.mjs selftest",
+    "diag": "node docs/read-diag.mjs"
+  },
+  "license": "MIT",
+  "os": [
+    "win32"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/YOUR_NAME/dsh-web-brief.git"
+  },
+  "bugs": {
+    "url": "https://github.com/YOUR_NAME/dsh-web-brief/issues"
+  },
+  "homepage": "https://github.com/YOUR_NAME/dsh-web-brief#readme",
+  "dependencies": {
+    "playwright-core": "^1.62.0"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "_comment": "dsweb 只读铁律。这些模式绝不允许出现在 dsweb.mjs 里。规则外置，避免自检自我匹配。",
+  "forbiddenSubstrings": [
+    "/chat/completion",
+    "chat_session/create",
+    "chat_session/delete",
+    "chat_session/update",
+    "chat_session/rename",
+    "/file/upload_file"
+  ],
+  "forbiddenHttpMethods": ["POST", "PUT", "PATCH", "DELETE"],
+  "allowedHttpMethods": ["GET", "OPTIONS"],
+  "note": "本文件只描述禁令，不含任何可执行逻辑。修改它等于放宽安全边界——请勿在未重新评估风险的情况下添加例外。"
+}

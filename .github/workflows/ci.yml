@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  smoke:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        node: [20, 22]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+
+      # 离线冒烟：不登录、不联网、不需要浏览器
+      - name: Offline smoke test
+        run: node tests/smoke.mjs
+
+      - name: Engine read-only self-check
+        run: node dsweb-share/dsweb.mjs selftest
+
+      - name: Syntax check (no bundler needed)
+        run: |
+          node --check lib/index.js
+          node --check lib/client.js
+          node --check dsweb-share/dsweb.mjs
