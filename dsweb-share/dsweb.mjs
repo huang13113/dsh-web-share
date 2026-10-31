@@ -118,8 +118,32 @@ export async function fetchRounds(driver, session) {
   return { title: session.title, sessionId: session.id, rounds };
 }
 
-// ---------------------------------------------------------------- 渲染
+/** 单条预览里每个角色最多显示多少字（只用于界面展示，导出时用的是全文）。 */
+const PEEK_CHARS = 320;
 
+/**
+ * 预览最后 N 轮，供用户挑选要完整上传的轮次。
+ *
+ * 只回传**截断后的文本**：真正的全文在导出时才重新读取渲染，
+ * 这样既不会把大段内容塞进预览接口，也不让客户端有机会篡改要上传的内容。
+ */
+export async function previewRounds(driver, target, tailN = 4) {
+  const session = await findSession(driver, target);
+  const packed = await fetchRounds(driver, session);
+  const total = packed.rounds.length;
+  const n = Math.max(1, Math.min(Number(tailN) || 4, 20));
+  const start = Math.max(0, total - n);
+  const rounds = packed.rounds.slice(start).map((r, k) => ({
+    n: start + k + 1,
+    userChars: r.user.length,
+    assistantChars: r.assistant.length,
+    userPeek: squeeze(r.user).slice(0, PEEK_CHARS),
+    assistantPeek: squeeze(r.assistant).slice(0, PEEK_CHARS),
+  }));
+  return { title: packed.title, totalRounds: total, from: start + 1, to: total, rounds };
+}
+
+// ---------------------------------------------------------------- 渲染
 const squeeze = (s) => String(s).replace(/\s+/g, " ").trim();
 const cut = (s, n) => {
   const t = squeeze(s);
@@ -127,28 +151,48 @@ const cut = (s, n) => {
 };
 
 /**
- * 交接包：最后 N 轮逐字完整，更早的轮次压缩成一行。
- * 交接要的是**方案定稿**，它就在最后一两轮里；全量转写会撑爆上下文。
+ * 交接包：**被选中的轮次逐字完整**，其余轮次压缩成一行。
+ *
+ * 交接要的是"方案定稿"，它通常在最后几轮里；全量转写会撑爆上下文。
+ *
+ * @param picked - 要完整保留的轮次号（1 基，对应 UI 里显示的「第 N 轮」）。
+ *                 省略时默认取最后 2 轮。
  */
-export function renderHandoff({ title, rounds, tailRounds = 2, headChars = 60, headBudget = 12000 }) {
-  const tailStart = Math.max(0, rounds.length - Math.max(1, tailRounds));
-  const head = rounds.slice(0, tailStart);
-  const tail = rounds.slice(tailStart);
+export function renderHandoff({ title, rounds, picked, tailRounds, headChars = 60, headBudget = 12000 }) {
+  const total = rounds.length;
+
+  // 选中集合（0 基）。默认 = 最后 2 轮。
+  let keep;
+  if (Array.isArray(picked) && picked.length > 0) {
+    keep = new Set(picked.map((n) => Number(n) - 1).filter((i) => Number.isInteger(i) && i >= 0 && i < total));
+  } else {
+    const n = Math.max(1, Math.min(tailRounds ?? 2, total));
+    keep = new Set(Array.from({ length: n }, (_, k) => total - n + k));
+  }
+  if (keep.size === 0) keep = new Set([total - 1]);
+
+  const headIdx = [];
+  const tailIdx = [];
+  for (let i = 0; i < total; i += 1) (keep.has(i) ? tailIdx : headIdx).push(i);
+
+  const head = headIdx.map((i) => rounds[i]);
+  const pickedSummary = tailIdx.map((i) => i + 1).join("、");
 
   const lines = [];
   lines.push(`# 交接：${title}`, "");
-  lines.push(`> 来源：chat.deepseek.com 网页版 · 共 ${rounds.length} 轮对话`);
-  lines.push(`> 最后 ${tail.length} 轮**完整保留**（方案定稿在这里）；更早的轮次压缩成一行。`, "");
+  lines.push(`> 来源：chat.deepseek.com 网页版 · 共 ${total} 轮对话`);
+  lines.push(`> **第 ${pickedSummary} 轮完整保留**（你选中的方案定稿）；其余轮次压缩成一行。`, "");
   lines.push("---", "");
 
   if (head.length > 0) {
     lines.push("## 一、前情（压缩）", "");
     let used = 0;
-    for (let i = 0; i < head.length; i += 1) {
-      const r = head[i];
-      const line = `- **第 ${i + 1} 轮**｜我：${cut(r.user, headChars) || "（空）"}　／　DeepSeek：${cut(r.assistant, headChars) || "（空）"}`;
+    for (let k = 0; k < head.length; k += 1) {
+      const r = head[k];
+      const n = headIdx[k] + 1;
+      const line = `- **第 ${n} 轮**｜我：${cut(r.user, headChars) || "（空）"}　／　DeepSeek：${cut(r.assistant, headChars) || "（空）"}`;
       if (used + line.length > headBudget) {
-        lines.push(`- …（前面还有 ${head.length - i} 轮，因篇幅省略）`);
+        lines.push(`- …（前面还有 ${head.length - k} 轮，因篇幅省略）`);
         break;
       }
       used += line.length;
@@ -157,18 +201,26 @@ export function renderHandoff({ title, rounds, tailRounds = 2, headChars = 60, h
     lines.push("", "---", "");
   }
 
-  lines.push(`## 二、最后${tail.length}轮（完整）`, "");
-  for (let i = 0; i < tail.length; i += 1) {
-    const r = tail[i];
-    const n = tailStart + i + 1;
+  lines.push(`## 二、完整保留的 ${tailIdx.length} 轮`, "");
+  for (const i of tailIdx) {
+    const r = rounds[i];
+    const n = i + 1;
     if (r.user) lines.push(`### 👤 我（第 ${n} 轮）`, "", r.user.trim() || "（空）", "");
     if (r.assistant) lines.push(`### 🤖 DeepSeek（第 ${n} 轮）`, "", r.assistant.trim() || "（空）", "");
   }
 
   const text = lines.join("\n");
-  const tailChars = tail.reduce((n, r) => n + r.user.length + r.assistant.length, 0);
+  const tailChars = tailIdx.reduce((n, i) => n + rounds[i].user.length + rounds[i].assistant.length, 0);
   const totalChars = rounds.reduce((n, r) => n + r.user.length + r.assistant.length, 0);
-  return { text, rounds: rounds.length, tail: tail.length, tailChars, totalChars, chars: text.length };
+  return {
+    text,
+    rounds: total,
+    tail: tailIdx.length,
+    picked: tailIdx.map((i) => i + 1),
+    tailChars,
+    totalChars,
+    chars: text.length,
+  };
 }
 
 /** 完整转写（存档用）。 */
@@ -192,13 +244,15 @@ function usage() {
   node dsweb.mjs doctor                        查看浏览器驱动与登录状态
   node dsweb.mjs login                         首次登录（弹出浏览器窗口，手动登录一次）
   node dsweb.mjs list [--count N] [--json]     列出网页版会话
-  node dsweb.mjs handoff <ID或标题> [--json]   生成交接包（最后几轮完整，前面压缩）
+  node dsweb.mjs preview <ID或标题> [--tail 4] 预览最后 N 轮（挑要完整上传的轮次）
+  node dsweb.mjs handoff <ID或标题> [--pick 28,29]  生成交接包（选中的轮次完整，其余压缩）
   node dsweb.mjs export <ID或标题> --out DIR   导出完整转写（存档用）
   node dsweb.mjs selftest                      只读自检
 
 选项：
   --driver playwright|tabbit|auto   选浏览器驱动（默认 auto）
-  --tail N                          handoff 完整保留最后几轮，默认 2
+  --tail N                          handoff 默认保留最后几轮，默认 2；preview 预览几轮，默认 4
+  --pick 28,29                      handoff 指定要完整保留的轮次号（逗号分隔）
   --head-chars N                    handoff 前情每条保留多少字，默认 60
 
 安全：只用 GET，永不发言、永不创建/删除会话、永不落盘凭证。
@@ -281,9 +335,28 @@ async function main() {
       return;
     }
 
+    if (cmd === "preview") {
+      const skip = new Set();
+      for (const f of ["--tail", "--driver"]) {
+        const i = rest.indexOf(f);
+        if (i >= 0) { skip.add(i); skip.add(i + 1); }
+      }
+      const target = rest.filter((a, i) => !a.startsWith("--") && !skip.has(i)).join(" ").trim();
+      if (target === "") { console.error("请给出会话 ID 或标题片段。"); process.exit(2); }
+      const pv = await previewRounds(driver, target, Number(flag(rest, "--tail", "4")));
+      if (jsonOnly) { console.log(JSON.stringify({ ok: true, ...pv })); return; }
+      console.log(`《${pv.title}》共 ${pv.totalRounds} 轮，预览第 ${pv.from}–${pv.to} 轮：\n`);
+      for (const r of pv.rounds) {
+        console.log(`── 第 ${r.n} 轮 ──`);
+        console.log(`  我(${r.userChars}字)：${r.userPeek}`);
+        console.log(`  DS(${r.assistantChars}字)：${r.assistantPeek}\n`);
+      }
+      return;
+    }
+
     if (cmd === "handoff" || cmd === "export") {
       const skip = new Set();
-      for (const f of ["--count", "--tail", "--head-chars", "--out", "--driver"]) {
+      for (const f of ["--count", "--tail", "--head-chars", "--out", "--driver", "--pick"]) {
         const i = rest.indexOf(f);
         if (i >= 0) { skip.add(i); skip.add(i + 1); }
       }
@@ -294,9 +367,12 @@ async function main() {
       const packed = await fetchRounds(driver, session);
 
       if (cmd === "handoff") {
+        const pickRaw = flag(rest, "--pick", "");
+        const pick = pickRaw === "" ? undefined : String(pickRaw).split(",").map((s) => Number(s.trim())).filter((n) => Number.isFinite(n));
         const out = renderHandoff({
           title: packed.title,
           rounds: packed.rounds,
+          picked: pick,
           tailRounds: Number(flag(rest, "--tail", "2")),
           headChars: Number(flag(rest, "--head-chars", "60")),
         });
