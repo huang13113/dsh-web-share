@@ -1,5 +1,5 @@
 {
-  "name": "dsh-web-brief",
+  "name": "dsh-web-share",
   "version": "0.3.0",
   "description": "DSH 插件：侧栏「网页版导出」+ 对话栏「网页版」标签页，把 chat.deepseek.com 的对话压成交接包，一键开新对话并预填。",
   "type": "module",
@@ -59,12 +59,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/YOUR_NAME/dsh-web-brief.git"
+    "url": "git+https://github.com/YOUR_NAME/dsh-web-share.git"
   },
   "bugs": {
-    "url": "https://github.com/YOUR_NAME/dsh-web-brief/issues"
+    "url": "https://github.com/YOUR_NAME/dsh-web-share/issues"
   },
-  "homepage": "https://github.com/YOUR_NAME/dsh-web-brief#readme",
+  "homepage": "https://github.com/YOUR_NAME/dsh-web-share#readme",
   "dependencies": {
     "playwright-core": "^1.62.0"
   }

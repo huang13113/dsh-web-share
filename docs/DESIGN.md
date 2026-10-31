@@ -198,7 +198,7 @@ Set-Content -Path x.json -Encoding UTF8
 装完会看到：
 
 ```
-warning: dsh-web-brief declares no dsh.bundle — installed as a plain dependency, not a profile layer
+warning: dsh-web-share declares no dsh.bundle — installed as a plain dependency, not a profile layer
 ```
 
 把 `dsh.bundle.patch` 补进 package.json 之后，`dump-config` 里仍然没有这一行。原因：`dsh plugin add` 只写 `dependencies`，**不会改 `dsh.profile.bundles`**，必须手动加。
@@ -206,7 +206,7 @@ warning: dsh-web-brief declares no dsh.bundle — installed as a plain dependenc
 验证方法：
 
 ```powershell
-dsh --profile web --dump-config | Select-String "ui-web-brief"
+dsh --profile web --dump-config | Select-String "ui-web-share"
 ```
 
 ### 4.8 一次性试装 profile 必须自己 `pnpm install`
@@ -214,7 +214,7 @@ dsh --profile web --dump-config | Select-String "ui-web-brief"
 手工建 profile 目录后直接启动会报：
 
 ```
-cannot resolve profile bundle "dsh-web-brief" from the dsh installation or <profile dir>
+cannot resolve profile bundle "dsh-web-share" from the dsh installation or <profile dir>
 ```
 
 因为 junction / node_modules 还没建。先 `pnpm install --no-frozen-lockfile`。

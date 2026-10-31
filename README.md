@@ -1,4 +1,4 @@
-# dsh-web-brief
+# dsh-web-share
 
 > **先省钱地聊，再全力地干。** 在 DeepSeek 网页版把方案聊清楚，一键交给 DeepSeek Harness 去执行。
 
@@ -109,14 +109,14 @@ node dsweb.mjs list --count 5  # ③ 真读一次会话列表
 
 ```powershell
 # 1) 装插件（会一并装 playwright-core，约 5 MB，不下载浏览器）
-dsh plugin --profile web add github:YOUR_NAME/dsh-web-brief
+dsh plugin --profile web add github:YOUR_NAME/dsh-web-share
 ```
 
 装完 **重启 DSH**（插件在启动时装配）。
 
 ```powershell
 # 2) 登录一次（会弹出一个真实浏览器窗口）
-cd "$env:USERPROFILE\.dsh\profiles\web\node_modules\dsh-web-brief\dsweb-share"
+cd "$env:USERPROFILE\.dsh\profiles\web\node_modules\dsh-web-share\dsweb-share"
 node dsweb.mjs login
 ```
 
@@ -210,7 +210,7 @@ node dsweb.mjs export "毕业论文" --out D:\share  # 完整转写（存档用�
 │ DSH Web GUI（浏览器）                          │
 │   lib/client.js                               │
 │   ├─ sidebar.panellist → 侧栏「网页版导出」      │
-│   ├─ main#web-brief    → 整页面板              │
+│   ├─ main#web-share    → 整页面板              │
 │   └─ conversation.view → 对话栏「网页版」标签    │
 └───────────────────┬──────────────────────────┘
                     │ 同源 fetch  /api/dsweb/*
@@ -237,6 +237,25 @@ node dsweb.mjs export "毕业论文" --out D:\share  # 完整转写（存档用�
 
 ---
 
+## 和同类项目的区别
+
+这块生态已经有人在做，我把差异摆出来，你自己判断要不要用：
+
+| 项目 | 做什么 | 和本项目的区别 |
+|---|---|---|
+| [`xmuwenxiang/dsh-web-chat`](https://github.com/xmuwenxiang/dsh-web-chat) | 在 DSH 里**用网页版聊天**（可发消息、可回填），并能把对话「迁移」成任务简报 | 它会**替你发消息**（走生成接口）；迁移时**用 LLM 蒸馏**（要花 token）。本项目**只读不发送**，交接包是**确定性拼装、零 LLM** |
+| [`cv-superding/dsh-deepseek-web-login`](https://github.com/cv-superding/dsh-deepseek-web-login) | 把网页版当**模型 provider**，用免费额度驱动 agent | 同样需要生成请求；本项目不碰生成侧 |
+| [`KyMi-22/dsh-deepseek-web`](https://github.com/KyMi-22/dsh-deepseek-web) · [`sbbbx/dsh-client-ui-webchat`](https://github.com/sbbbx/dsh-client-ui-webchat) | 把网页版对话接进 DSH | 功能取向往"聊天/双向搬运"靠；本项目只解决**单向交接**这一件事 |
+| `dsh-share` / `dsh-share-link` / `dsh-qr-share` 等 | 会话**分享**（公网链接、二维码） | 名字里都有 share，但做的是"把会话发出去"，不是"把网页版对话交给 agent" |
+
+**一句话定位**：别人做的是「让网页版替 agent 干活」，本项目做的是「让 agent 接着你们聊好的方案干活」。
+前者需要生成、有账号风险；后者只读、零风险。
+
+如果你需要的是"在 DSH 里直接和网页版对话"，[`dsh-web-chat`](https://github.com/xmuwenxiang/dsh-web-chat) 更合适；
+如果你只是想**把聊好的结论交出去**，本项目的交接包更省。
+
+---
+
 ## 常见问题
 
 **Q：面板是空的 / 标签在但没内容？**
@@ -258,7 +277,7 @@ node dsweb.mjs export "毕业论文" --out D:\share  # 完整转写（存档用�
 
 **Q：会用我日常的浏览器登录态吗？**
 
-不会。插件有自己的配置目录（`~/.dsh/web-brief/browser-profile`），和你日常用的浏览器互不影响。
+不会。插件有自己的配置目录（`~/.dsh/web-share/browser-profile`），和你日常用的浏览器互不影响。
 
 ---
 
@@ -279,7 +298,7 @@ node dsweb.mjs export "毕业论文" --out D:\share  # 完整转写（存档用�
 之后**完全后台静默**：不再弹窗，导出直接走无头浏览器
 ```
 
-这个窗口是**独立配置**的（`~/.dsh/web-brief/browser-profile`），不会带出你日常浏览器的标签页、书签、历史。
+这个窗口是**独立配置**的（`~/.dsh/web-share/browser-profile`），不会带出你日常浏览器的标签页、书签、历史。
 
 **② 为什么不在 Electron 里内嵌登录**
 
@@ -293,7 +312,7 @@ node dsweb.mjs export "毕业论文" --out D:\share  # 完整转写（存档用�
 这个分支已在代码中处理；如果你在桌面端遇到"点了没反应"，请先跑自测清单并把报错贴出来。
 
 > 桌面端的 profile 名通常是 `desktop`：
-> `dsh plugin --profile desktop add github:YOUR_NAME/dsh-web-brief`
+> `dsh plugin --profile desktop add github:YOUR_NAME/dsh-web-share`
 
 ---
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * 一次性迁移工具：把 Tabbit 浏览器里的 DeepSeek 登录态复制到本插件的
- * Playwright 配置目录（~/.dsh/web-brief/browser-profile）。
+ * Playwright 配置目录（~/.dsh/web-share/browser-profile）。
  *
  * 用途：已经用 Tabbit 跑通过的用户，可以免去再登录一次。
  * 注意：这只搬 cookie，不搬密码，也不落任何明文凭据文件——
@@ -56,7 +56,7 @@ const { chromium } = await import("playwright-core");
 const { mkdirSync } = await import("node:fs");
 const { homedir } = await import("node:os");
 
-const profile = process.env.DSWEB_PROFILE ?? join(process.env.DSH_HOME ?? join(homedir(), ".dsh"), "web-brief", "browser-profile");
+const profile = process.env.DSWEB_PROFILE ?? join(process.env.DSH_HOME ?? join(homedir(), ".dsh"), "web-share", "browser-profile");
 mkdirSync(profile, { recursive: true });
 
 const ctx = await chromium.launchPersistentContext(profile, {

@@ -50,7 +50,7 @@ for (const [file, src] of Object.entries(engineSources)) {
 
 console.log("\n=== 3) 清单声明 ===");
 const pkg = JSON.parse(read("package.json"));
-check("name 为 dsh-web-brief", pkg.name === "dsh-web-brief");
+check("name 为 dsh-web-share", pkg.name === "dsh-web-share");
 check("未标记 private（可发布）", pkg.private !== true);
 check("声明 dsh.bundle.patch", pkg.dsh?.bundle?.patch === "./cordis.patch.yml");
 check("声明 dsh.client", pkg.dsh?.client?.platform === "web");
@@ -60,8 +60,8 @@ check("files 含 dsweb-share", (pkg.files ?? []).some((f) => f.startsWith("dsweb
 check("声明 playwright-core 依赖", typeof pkg.dependencies?.["playwright-core"] === "string");
 
 const patch = read("cordis.patch.yml");
-check("patch 插入自身一行", patch.includes("dsh-web-brief"));
-check("patch 行 id 为 ui-web-brief", patch.includes("ui-web-brief"));
+check("patch 插入自身一行", patch.includes("dsh-web-share"));
+check("patch 行 id 为 ui-web-share", patch.includes("ui-web-share"));
 
 console.log("\n=== 4) 注册契约（mock ctx） ===");
 // Windows 上动态 import 必须用 file:// URL，裸绝对路径会被当成 d: 协议
@@ -85,12 +85,12 @@ check("路由为 prefix /api/dsweb", route?.kind === "prefix" && route?.path ===
 console.log("\n=== 5) 客户端模块引导 ===");
 const client = read("lib/client.js");
 check("使用 __ModuleLoader__ 引导", client.includes("window.__ModuleLoader__.load"));
-check("模块 id 与包名一致", client.includes('id: "dsh-web-brief"'));
+check("模块 id 与包名一致", client.includes('id: "dsh-web-share"'));
 // 三个座位：侧栏行 / 整页面板 / 对话栏标签页
 check("注册 sidebar.panellist 行", client.includes('slots.inject("sidebar.panellist"'));
 check("注册 main 整页面板", client.includes('slots.inject("main"'));
 check("注册 conversation.view 座位", client.includes('slots.inject("conversation.view"'));
-check("面板 key 与侧栏 id 一致", client.includes('const PANEL_ID = "web-brief"'));
+check("面板 key 与侧栏 id 一致", client.includes('const PANEL_ID = "web-share"'));
 check("未注册 single 座位 root", !/'root'|"root"/.test(client));
 check("未越过 sidebar 到整列", !client.includes('inject("sidebar"'));
 check("未越过 conversation 到整列", !client.includes('inject("conversation"'));

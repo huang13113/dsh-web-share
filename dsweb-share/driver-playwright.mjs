@@ -8,7 +8,7 @@
  *   - 请求在**宿主 Node 进程里**发出，不经过 CLI 中转，**没有 16 KiB 结果上限**
  *   - 但需要一次性登录：在插件弹出的浏览器窗口里登录 chat.deepseek.com
  *
- * 配置目录：$DSH_HOME/web-brief/browser-profile（默认 ~/.dsh/web-brief/browser-profile）
+ * 配置目录：$DSH_HOME/web-share/browser-profile（默认 ~/.dsh/web-share/browser-profile）
  * 可用环境变量覆盖：DSWEB_PROFILE / DSWEB_CHANNEL（如 "msedge,chrome"）
  */
 
@@ -21,7 +21,7 @@ const ORIGIN = "https://chat.deepseek.com";
 
 const PROFILE_DIR =
   process.env.DSWEB_PROFILE ??
-  join(process.env.DSH_HOME ?? join(homedir(), ".dsh"), "web-brief", "browser-profile");
+  join(process.env.DSH_HOME ?? join(homedir(), ".dsh"), "web-share", "browser-profile");
 
 const CHANNELS = (process.env.DSWEB_CHANNEL ?? "msedge,chrome")
   .split(",")

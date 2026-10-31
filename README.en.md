@@ -1,4 +1,4 @@
-# dsh-web-brief
+# dsh-web-share
 
 > **Think cheap, then build.** Work out the plan in the DeepSeek web UI, then hand it to DeepSeek Harness with one click.
 
@@ -104,14 +104,14 @@ node dsweb.mjs list --count 5  # 3) actually read the session list
 
 ```powershell
 # 1) Install (pulls in playwright-core, ~5 MB, no browser download)
-dsh plugin --profile web add github:YOUR_NAME/dsh-web-brief
+dsh plugin --profile web add github:YOUR_NAME/dsh-web-share
 ```
 
 **Restart DSH** afterwards.
 
 ```powershell
 # 2) Log in once (a real browser window opens)
-cd "$env:USERPROFILE\.dsh\profiles\web\node_modules\dsh-web-brief\dsweb-share"
+cd "$env:USERPROFILE\.dsh\profiles\web\node_modules\dsh-web-share\dsweb-share"
 node dsweb.mjs login
 ```
 
@@ -198,7 +198,7 @@ Covered: generation endpoint, session create/delete/rename, file upload, and `PO
 DSH Web GUI (browser)
   lib/client.js
   ├─ sidebar.panellist  → sidebar row
-  ├─ main#web-brief     → full-page panel
+  ├─ main#web-share     → full-page panel
   └─ conversation.view  → "Web" tab
         │ same-origin fetch  /api/dsweb/*
 DSH host (Node)
@@ -228,7 +228,7 @@ Real browser → chat.deepseek.com
 
 **Can it use the browser I already have open?** Not transparently — a normally launched browser has no debugging port, and cross-origin rules stop the DSH page from reading DeepSeek. This project uses **your system Edge/Chrome with its own profile**, one login.
 
-**Does it touch my daily browser's session?** No. It uses `~/.dsh/web-brief/browser-profile`, separate from your daily browsing.
+**Does it touch my daily browser's session?** No. It uses `~/.dsh/web-share/browser-profile`, separate from your daily browsing.
 
 ---
 
