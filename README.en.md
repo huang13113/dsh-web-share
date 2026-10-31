@@ -104,7 +104,7 @@ node dsweb.mjs list --count 5  # 3) actually read the session list
 
 ```powershell
 # 1) Install (pulls in playwright-core, ~5 MB, no browser download)
-dsh plugin --profile web add github:YOUR_NAME/dsh-web-share
+dsh plugin --profile web add github:huang13113/dsh-web-share
 ```
 
 **Restart DSH** afterwards.

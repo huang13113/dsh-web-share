@@ -112,7 +112,7 @@ node dsweb.mjs list --count 5  # ③ 真读一次会话列表
 
 ```powershell
 # 1) 装插件（会一并装 playwright-core，约 5 MB，不下载浏览器）
-dsh plugin --profile web add github:YOUR_NAME/dsh-web-share
+dsh plugin --profile web add github:huang13113/dsh-web-share
 ```
 
 装完 **重启 DSH**（插件在启动时装配）。
@@ -316,7 +316,7 @@ node dsweb.mjs export "毕业论文" --out D:\share  # 完整转写（存档用�
 这个分支已在代码中处理；如果你在桌面端遇到"点了没反应"，请先跑自测清单并把报错贴出来。
 
 > 桌面端的 profile 名通常是 `desktop`：
-> `dsh plugin --profile desktop add github:YOUR_NAME/dsh-web-share`
+> `dsh plugin --profile desktop add github:huang13113/dsh-web-share`
 
 ---
 

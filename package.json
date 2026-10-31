@@ -59,12 +59,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/YOUR_NAME/dsh-web-share.git"
+    "url": "git+https://github.com/huang13113/dsh-web-share.git"
   },
   "bugs": {
-    "url": "https://github.com/YOUR_NAME/dsh-web-share/issues"
+    "url": "https://github.com/huang13113/dsh-web-share/issues"
   },
-  "homepage": "https://github.com/YOUR_NAME/dsh-web-share#readme",
+  "homepage": "https://github.com/huang13113/dsh-web-share#readme",
   "dependencies": {
     "playwright-core": "^1.62.0"
   }
