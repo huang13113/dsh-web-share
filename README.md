@@ -256,9 +256,44 @@ node dsweb.mjs export "毕业论文" --out D:\share  # 完整转写（存档用�
 做不到透明：普通启动的浏览器没开调试端口，而且跨域限制让 DSH 页面读不到 DeepSeek。
 本项目的做法是"用你系统的 Edge/Chrome，但配一个独立配置目录"，登录一次即可。
 
-**Q：会动我日常浏览器的登录态吗？**
+**Q：会用我日常的浏览器登录态吗？**
 
 不会。插件有自己的配置目录（`~/.dsh/web-brief/browser-profile`），和你日常用的浏览器互不影响。
+
+---
+
+## DSH Desktop（桌面端）说明
+
+桌面端是 Electron 应用，插件在里面**不需要特殊配置**，但有三点要知道：
+
+**① 登录时确实会弹一个系统浏览器窗口**
+
+因为 DeepSeek 的登录态（`userToken`）只能存在于浏览器 profile 里，而 Electron 的 profile
+对第三方插件是拿不到的。所以首次使用会：
+
+```
+点「登录 DeepSeek」→ 弹出系统 Edge/Chrome 的一个新窗口
+        ↓ 你正常登录 chat.deepseek.com
+        窗口自动关闭（登录态存进插件自己的配置目录）
+        ↓
+之后**完全后台静默**：不再弹窗，导出直接走无头浏览器
+```
+
+这个窗口是**独立配置**的（`~/.dsh/web-brief/browser-profile`），不会带出你日常浏览器的标签页、书签、历史。
+
+**② 为什么不在 Electron 里内嵌登录**
+
+内嵌需要应用层提供 webview / BrowserView 的插件 API，而 DSH 目前没有把这层开放给插件；
+退而求其次"复用你 Electron 里的会话"也不行——那属于应用自身的 profile，插件无权限访问。
+
+**③ 引擎拉起方式已做兼容**
+
+桌面端跑在 Electron 里，`process.execPath` 指向应用本体而不是 node。
+插件拉起引擎时会自动带上 `ELECTRON_RUN_AS_NODE=1`，否则会把整个应用再启动一次。
+这个分支已在代码中处理；如果你在桌面端遇到"点了没反应"，请先跑自测清单并把报错贴出来。
+
+> 桌面端的 profile 名通常是 `desktop`：
+> `dsh plugin --profile desktop add github:YOUR_NAME/dsh-web-brief`
 
 ---
 
