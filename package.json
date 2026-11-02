@@ -1,6 +1,6 @@
 {
   "name": "dsh-web-share",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "DSH 插件：侧栏「网页版导出」+ 对话栏「网页版」标签页，把 chat.deepseek.com 的对话压成交接包，一键开新对话并预填。",
   "type": "module",
   "main": "lib/index.js",

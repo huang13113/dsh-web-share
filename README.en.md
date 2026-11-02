@@ -35,14 +35,14 @@ Press Enter — the agent picks up the plan and starts working
 
 ---
 
-## Two entry points, same behaviour
+## Two entry points, two destinations
 
 | Entry | Where |
 |---|---|
-| **Sidebar → "Web export"** | A row below Plugins / Automation / Task board; opens a full-page panel |
-| **Conversation tab → "Web"** | Sits next to Chat and Trajectory |
+| **Sidebar → "Web export"** | A row below Plugins / Automation / Task board; opens a full-page panel → **creates a new conversation** |
+| **Conversation tab → "Web"** | Sits next to Chat and Trajectory → **writes into the current conversation's composer** |
 
-Clicking **"Export to new conversation"** on any row will:
+The sidebar panel button reads **"Export to new conversation"**; the tab button reads **"Export to composer"**. Both will:
 
 1. Build a **handoff pack** — last 2 exchanges kept verbatim, earlier rounds compressed to one line each
 2. **Create a new conversation** (workspace picked automatically)
@@ -133,7 +133,9 @@ node dsweb.mjs doctor
 
 Sidebar → **Web export** → find the conversation → **Export to new conversation** → review the pre-filled composer → Enter.
 
-**Conversation tab** — same flow from the **Web** tab.
+> The panel has no session context, so it can only create a new conversation.
+
+**Conversation tab** — open the **Web** tab and press **"Export to composer"**; the pack lands in the composer of the conversation you are already in. No new conversation is created.
 
 **Agent tool**
 ```
@@ -162,7 +164,7 @@ node dsweb.mjs export "thesis" --out D:\share   # full transcript (archive, writ
 | **Read-only** | GET only. A hard-coded self-check refuses to start if write capability appears |
 | **No stored credentials** | Login stays in the browser profile; the plugin never reads or writes credential files |
 | **Swappable driver** | `playwright` (default, system Edge/Chrome) or `tabbit` |
-| **Two entries** | Sidebar panel + conversation tab, both official slots — no overlay hacks |
+| **Two entries, two destinations** | Sidebar → new conversation; conversation tab → current conversation's composer |
 
 ---
 
