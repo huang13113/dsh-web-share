@@ -5,7 +5,7 @@
 [![DSH Plugin](https://img.shields.io/badge/DSH-plugin-4f46e5?style=flat-square)](https://github.com/deepseek-ai/deepseek-harness)
 [![License](https://img.shields.io/badge/license-MIT-263146?style=flat-square)](LICENSE)
 [![Read-only](https://img.shields.io/badge/design-read--only-10b981?style=flat-square)](#只读是设计前提不是功能缺失)
-[![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-0078d4?style=flat-square)](#前置要求)
+[![Platform](https://img.shields.io/badge/platform-Windows-0078d4?style=flat-square)](#前置要求)
 
 [English](README.en.md) · 中文
 
@@ -73,7 +73,7 @@
 | **Edge 或 Chrome** | 插件用 `playwright-core` 驱动**你系统里的浏览器**（不下载额外的 Chromium） |
 | **DSH** | `>= 0.1.7-rc.2`（在 0.1.7-rc.2 与 0.2.1-rc.2 上验证过） |
 | **Node** | `>= 20` |
-| **平台** | Windows / macOS / Linux |
+| **平台** | **仅 Windows**（发布包 `os: win32`；macOS / Linux 上 npm 会按 `os` 字段拒绝安装，除非加 `--force`） |
 
 > 已装 Tabbit 的用户也可以切到 `tabbit` 驱动（零登录，仅 Windows）：
 > `DSWEB_DRIVER=tabbit node dsweb-share/dsweb.mjs doctor`

@@ -5,7 +5,7 @@
 [![DSH Plugin](https://img.shields.io/badge/DSH-plugin-4f46e5?style=flat-square)](https://github.com/deepseek-ai/deepseek-harness)
 [![License](https://img.shields.io/badge/license-MIT-263146?style=flat-square)](LICENSE)
 [![Read-only](https://img.shields.io/badge/design-read--only-10b981?style=flat-square)](#read-only-by-design)
-[![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-0078d4?style=flat-square)](#requirements)
+[![Platform](https://img.shields.io/badge/platform-Windows-0078d4?style=flat-square)](#requirements)
 
 English · [中文](README.md)
 
@@ -68,7 +68,7 @@ A 30-round conversation becomes **6,620 characters** with the last 2 rounds inta
 | **Edge or Chrome** | Drives the browser already on your machine via `playwright-core` — no extra Chromium download |
 | **DSH** | `>= 0.1.7-rc.2` (verified on 0.1.7-rc.2 and 0.2.1-rc.2) |
 | **Node** | `>= 20` |
-| **OS** | Windows / macOS / Linux |
+| **OS** | **Windows only** (the published package declares `os: win32`; npm refuses to install on macOS / Linux by that field unless you pass `--force`) |
 
 > Tabbit users can switch to the zero-login `tabbit` driver (Windows only):
 > `DSWEB_DRIVER=tabbit node dsweb-share/dsweb.mjs doctor`
